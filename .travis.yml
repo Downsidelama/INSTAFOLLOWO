@@ -1,7 +1,13 @@
 language: python
 python:
- - "3.7"
- install:
-  - pip install -r requirements.txt
+- "3.7-dev"
+# setup environment
+env:
+- DJANGO_VERSION=2.1
+# install dependencies
+install:
+- pip install -r requirements.txt
+
+# run test scripts
 script:
- - py manage.py runserver
+- python manage.py test
