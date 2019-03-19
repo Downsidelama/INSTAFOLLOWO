@@ -32,4 +32,4 @@ $ python manage.py runserver
 License
 ----
 
-MIT
+GPL-3.0
