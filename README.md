@@ -1,8 +1,8 @@
-# INSTAFOLLOWO
+# INSTAUTOFOLLOWO
 
 [![Build Status](https://travis-ci.com/Downsidelama/INSTAFOLLOWO.svg?branch=master)](https://travis-ci.com/Downsidelama/INSTAFOLLOWO)
 
-INSTAFOLLOWO is a cloud based instagram bot. You can sit back and see the follower numbers grow!
+INSTAUTOFOLLOWO is a cloud based instagram bot. You can sit back and see the follower numbers grow!
 
   - Follows followers' of instagram profiles
   - Follows people who post under the specified hashtag
@@ -14,7 +14,7 @@ INSTAFOLLOWO is a cloud based instagram bot. You can sit back and see the follow
 
 ### Installation
 
-INSTAFOLLOWO requires [Python](https://python.org/) v3.7+ to run.
+INSTAUTOFOLLOWO requires [Python](https://python.org/) v3.7+ to run.
 
 Install the dependencies and start the server.
 
