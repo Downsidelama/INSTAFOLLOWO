@@ -25,4 +25,5 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(),{'authentication_form':LoginForm}),
     path('authentication/', include('django.contrib.auth.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('accounts/', include('accounts.urls')),
 ]
