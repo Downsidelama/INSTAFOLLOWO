@@ -1,3 +1,5 @@
-Django
+Django==2.1
 gunicorn
 django-heroku
+requests
+instaloader
