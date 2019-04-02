@@ -1,13 +1,20 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.contrib.auth.admin import User
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import InstagramAccount
 
 
 @login_required
 def index(request):
-    return render(request, 'dashboard/index.html')
+    context = {
+        'user_number': User.objects.count(),
+        'insta_number': InstagramAccount.objects.count(),
+    }
+    return render(request, 'dashboard/index.html', context)
 
 
 @login_required
@@ -22,3 +29,8 @@ def accounts(request):
 @login_required
 def profile(request):
     return render(request, 'dashboard/profile.html')
+
+
+class AddAccount(LoginRequiredMixin, View):
+    def get(self, request):
+        return redirect(reverse('dashboard:accounts'))
