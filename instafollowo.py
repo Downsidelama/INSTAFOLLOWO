@@ -34,7 +34,7 @@ class INSTAFOLLOWOBOT:
     #tag (maxid)
     url_media_by_tag = url_base + "/explore/tags/{}/?__a=1"
     url_media_by_tag_maxid = url_base + "/explore/tags/{}/?__a=1&max_id={}/"
-    
+
 
     #Fake headers
     #todo: add fake_useragent maybe
@@ -102,7 +102,7 @@ class INSTAFOLLOWOBOT:
     #todo
     #def logout(self):
 
-        #logout_data = 
+        #logout_data =
         #logout = self.session.post(self.url_logout, data=logout_data)
 
     #returns json
@@ -215,7 +215,37 @@ class INSTAFOLLOWOBOT:
                 mediaids_by_tag.append((media_data[i]["node"]["owner"]["id"]))
 
         return mediaids_by_tag
-    
+
+
+    # not finished
+    def get_follower_ids(self, userid, amount):
+        followers_ids = []
+
+    def unfollow_if_no_followback(self, userid):
+        followers_ids = get_follower_ids(userid)
+        for i in range(len(followers_ids)):
+            if !is_followed_by(followers_ids[i]):
+                unfollow(followers_ids[i])
+                print("Unfollowed" + followers_ids[i])
+
+    def follow_by_hashtag(self, hashtag):
+        print("d i r r / not finished")
+
+    def follow_by_user_followers(self, userid):
+        followers_ids = get_follower_ids(userid)
+        for i in range():
+            follow(followers_ids[i])
+            print("Followed" + followers_ids[i])
+
+
+    def like_by_hashtag(self, hashtag):
+        hashtag_ids = get_mediaids_by_tag(hashtag)
+        for i in range(len(hashtag_ids)):
+            like(hashtag_ids[i])
+            print("Liked" + hashtag_ids[i])
+    # not finished
+
+
 
 
 
