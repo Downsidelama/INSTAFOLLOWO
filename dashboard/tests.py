@@ -1,10 +1,14 @@
 import re
+from unittest import mock
+import socket
 
 from django.contrib.auth.models import User
 from django.test import Client
 from django.test import TestCase
 
 from .models import InstagramAccount
+from .libs.BotSocket import BotSocket
+from .libs.BotStatus import BotStatus
 
 
 def login(func):
@@ -66,3 +70,33 @@ class DashboardTestCase(TestCase):
         response = self.client.get('/dashboard/')
         contains_pattern = re.findall(r'Users(.*)1', response.content.decode().strip(), re.MULTILINE | re.DOTALL)
         self.assertTrue(contains_pattern)
+
+
+class BotConnectTest(TestCase):
+
+    def test_set_bot_running_status_running(self):
+        with mock.patch('socket.socket') as mock_socket:
+            mock_socket.return_value.recv.return_value = 'RUNNING'.encode()
+            bs = BotSocket()
+            bs.set_account_status("root", BotStatus.RUNNING)
+            self.assertEqual(bs.get_account_status("root"), BotStatus.RUNNING)
+
+    @mock.patch('socket.socket')
+    def test_set_status_successful_returns_true(self, mock_socket):
+        bs = BotSocket()
+        self.assertTrue(bs.set_account_status('root', BotStatus.RUNNING))
+
+    @mock.patch.object(socket.socket, 'connect')
+    @mock.patch.object(socket.socket, 'sendall', side_effect=socket.error())
+    @mock.patch.object(socket.socket, 'recv')
+    def test_set_status_unsuccessful_returns_false(self, a, b, c):
+        """
+        Simulate network error by mocking socket.socket
+        :param a:
+        :param b:
+        :param c:
+        :return:
+        """
+        bs = BotSocket()
+        rv = bs.set_account_status('root', BotStatus.RUNNING)
+        self.assertFalse(rv)

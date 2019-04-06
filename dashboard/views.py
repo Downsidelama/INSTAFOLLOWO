@@ -34,3 +34,8 @@ def profile(request):
 class AddAccount(LoginRequiredMixin, View):
     def get(self, request):
         return redirect(reverse('dashboard:accounts'))
+
+
+class BotStatus(LoginRequiredMixin, View):
+    def get(self, request):
+        pass
