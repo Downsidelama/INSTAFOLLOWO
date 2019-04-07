@@ -21,8 +21,18 @@ Install the dependencies and start the server.
 ```sh
 $ cd INSTAFOLLOWO
 $ python -m pip install -r requirements.txt
+$ python manage.py makemigrations
+$ python manage.py migrate
 $ python manage.py runserver
 ```
+
+Adding a test user:
+
+```sh
+$ python manage.py createsuperuser
+```
+
+Then fill in the details according to the prompt.
 
 ### Running tests
 
