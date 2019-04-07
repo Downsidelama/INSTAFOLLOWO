@@ -3,13 +3,12 @@ import random
 import re
 import time
 import json
-import instaloader
 
 #teszt fiok:
 #gmail.hu instafollowo pe1234
 #instagram instfow1 pe1234
 
-class INSTAFOLLOWOBOT:
+class Bot:
 
     #Urls
     url_base = "https://www.instagram.com"
@@ -24,8 +23,11 @@ class INSTAFOLLOWOBOT:
     url_follow = url_base + "/web/friendships/{}/follow/"
     url_unfollow = url_base + "/web/friendships/{}/unfollow/"
 
+    url_api = "https://i.instagram.com/api/v1/users/{}/info/"
+
     #username
-    url_profile = url_base + "/{}/"
+    url_profile = url_base + "/{}"
+    url_profile_json = url_profile + "/?__a=1"
 
     #mediaid
     url_like = url_base + "/web/likes/{}/like/"
@@ -69,7 +71,6 @@ class INSTAFOLLOWOBOT:
 
         self.loggedin = False
         self.session = requests.Session()
-        self.instaloader = instaloader.Instaloader()
 
         #self.followercount = 0
         #self.followingcount = 0
@@ -92,13 +93,16 @@ class INSTAFOLLOWOBOT:
             "password": self.password
         }
 
-        # finding csrftoken
         info = self.session.get(self.url_base)
         csrf_token = re.search('(?<="csrf_token":")\w+', info.text).group(0)
-        self.session.headers.update({'X-CSRFToken': csrf_token})
+        self.session.headers.update({"X-CSRFToken": csrf_token})
 
         login = self.session.post(self.url_login, data = self.login_data, allow_redirects = True)
-        self.session.headers.update({'X-CSRFToken': login.cookies['csrftoken']})
+        try:
+            self.session.headers.update({"X-CSRFToken": login.cookies["csrftoken"]})
+            self.csrftoken = login.cookies["csrftoken"]
+        except:
+            print("Login error")
 
         login_json = login.json()
 
@@ -110,33 +114,23 @@ class INSTAFOLLOWOBOT:
         else:
             print("Login error")
 
-    #todo
-    #def logout(self):
+    def logout(self):
+        if self.loggedin:
+            logout_data = {'csrfmiddlewaretoken': self.csrftoken}
+            self.session.post(self.url_logout, data=logout_data)
+            self.loggedin = False
+            print("Logged out")
+        else:
+            print("Not logged in")
 
-        #logout_data =
-        #logout = self.session.post(self.url_logout, data=logout_data)
-
-    #returns json
+    
     def get_userdata(self, username):
-        url_profile = self.url_profile.format(username)
+        url_profile = self.url_profile_json.format(username)
 
         info = self.session.get(url_profile)
-        json_data = json.loads(
-            re.search(
-                "window._sharedData = (.*?);</script>", info.text, re.DOTALL
-            ).group(1)
-        )["entry_data"]["ProfilePage"][0]
-
-        user_data = json_data["graphql"]["user"]
+        user_data = json.loads(info.text)["graphql"]["user"]
 
         return user_data
-
-        #current_username = user_data["username"]
-        #followers = user_data["edge_followed_by"]["count"]
-        #following = user_data["edge_follow"]["count"]
-
-        #self.followercount += int(followers)
-        #self.followingcount += int(following)
 
     def follow(self, userid):
         url_follow = self.url_follow.format(userid)
@@ -172,9 +166,8 @@ class INSTAFOLLOWOBOT:
             like = self.session.post(url_unlike)
             print("Unliked " + mediaid)
 
-    #checks if a profile is following the logged in profile(or has requested to follow)
-    #returns false if profiles are the same
     def is_followed_by(self, username):
+        # checks if target profile follows active profile
         user_info = self.get_userdata(username)
 
         follows_viewer = user_info["follows_viewer"]
@@ -187,8 +180,8 @@ class INSTAFOLLOWOBOT:
             print("Not followed by " + username)
             return False
 
-    #checks if the logged in profile is following a profile(or has requested to follow)
     def is_following(self, username):
+        # checks if active profile follows target profile
         user_info = self.get_userdata(username)
 
         followed_by_viewer = user_info["followed_by_viewer"]
@@ -202,13 +195,12 @@ class INSTAFOLLOWOBOT:
             return False
 
     def get_username_by_userid(self, userid):
-        if self.loggedin:
-            profile = instaloader.Profile.from_id(self.instaloader.context, userid)
-            username = profile.username
-            return username
-        else:
-            return false
+        # this link may get deprecated 
+        url_api = self.url_api.format(userid)
+        info = self.session.get(url_api)
+        username = json.loads(info.text)["user"]["username"]
 
+        return username
 
     def get_userid_by_username(self, username):
         user_info = self.get_userdata(username)
@@ -216,9 +208,8 @@ class INSTAFOLLOWOBOT:
 
         return userid
 
-    #returns an array of mediaids
-    #seems to be around 70 ids per request
     def get_mediaids_by_tag(self, tag):
+        # returns around 70 mediaids by a hashtag
         url_media_by_tag = self.url_media_by_tag.format(tag)
         mediaids_by_tag = []
 
@@ -226,15 +217,27 @@ class INSTAFOLLOWOBOT:
             i = self.session.get(url_media_by_tag)
             media_data = json.loads(i.text)["graphql"]["hashtag"]["edge_hashtag_to_media"]["edges"]
             for i in range(len(media_data)):
-                mediaids_by_tag.append((media_data[i]["node"]["owner"]["id"]))
+                mediaids_by_tag.append((media_data[i]["node"]["id"]))
 
         return mediaids_by_tag
 
-    #returns an amount of userids that follow the target profile
-    #seems to be a maximum of 50 userids returned(and mostly seems to return fewer than requested)
-    #also seems to return "rate limited" after around 20 requests within a short amount of time
-    #returns back to normal after 15-30 minutes 
-    def get_followerids(self, userid, amount):
+    def get_userids_by_tag(self, tag):
+        # returns around 70 userids by a hashtag
+        url_media_by_tag = self.url_media_by_tag.format(tag)
+        userids_by_tag = []
+
+        if self.loggedin:
+            i = self.session.get(url_media_by_tag)
+            media_data = json.loads(i.text)["graphql"]["hashtag"]["edge_hashtag_to_media"]["edges"]
+            for i in range(len(media_data)):
+                userids_by_tag.append((media_data[i]["node"]["owner"]["id"]))
+
+        return userids_by_tag
+
+    def get_followerids(self, userid, amount = 50):
+        # returns a maximum of 50 userids that follow target profile
+        # seems to actually return less than 50 in most cases for some reason
+        # rate_limited error occurs after around 20 requests but resumes inside ~30 mins(?)
         url_followers = self.url_followers.format(userid, amount)
         follower_ids = []
         info = self.session.get(url_followers)
@@ -246,31 +249,42 @@ class INSTAFOLLOWOBOT:
             print("ERROR: " + json.loads(info.text)["message"])
 
         return follower_ids
+    
+    def get_followingids(self, userid, amount = 50):
+        # returns userids that target profile is following
+        url_followings = self.url_following.format(userid, amount)
+        following_ids = []
+        info = self.session.get(url_followings)
+        try:
+            following_data = json.loads(info.text)["data"]["user"]["edge_follow"]["edges"]
+            for i in range(len(following_data)):
+                following_ids.append(following_data[i]["node"]["id"])
+        except KeyError:
+            print("ERROR: " + json.loads(info.text)["message"])
 
-    #unfollows up to 50 profiles that dont follow back
+        return following_ids 
+
     def unfollow_if_no_followback(self):
-        follower_ids = self.get_follower_ids(self.userid, 50)
-        for i in range(len(follower_ids)):
-            if not self.is_followed_by(follower_ids[i]):
-                self.unfollow(follower_ids[i])
+        # unfollows up to 50 profiles that dont follow active profile
+        userids = self.get_follower_ids(self.userid)
+        for i in range(len(userids)):
+            if not self.is_followed_by(userids[i]):
+                self.unfollow(userids[i])
 
-    # not finished
     def follow_by_tag(self, tag):
-        print("d i r r / not finished")
+        # TODO: add limits to not get detected as a bot
+        userids = self.get_userids_by_tag(tag)
+        for i in range(len(userids)):
+            self.follow(userids[i])
 
     def follow_by_user_followers(self, userid):
-        followers_ids = get_follower_ids(userid)
-        for i in range():
-            follow(followers_ids[i])
-            print("Followed" + followers_ids[i])
-
+        # TODO: add limits to not get detected as a bot
+        userids = self.get_followerids(userid)
+        for i in range(len(userids)):
+            self.follow(userids[i])
 
     def like_by_tag(self, tag):
-        hashtag_ids = get_mediaids_by_tag(tag)
-        for i in range(len(tag_ids)):
-            like(tag_ids[i])
-            print("Liked" + tag_ids[i])
-    # not finished
-
-
-bot = INSTAFOLLOWOBOT("instfow1", "pe1234")
+        # TODO: add limits to not get detected as a bot
+        mediaids = self.get_mediaids_by_tag(tag)
+        for i in range(len(mediaids)):
+            self.like(mediaids[i])
