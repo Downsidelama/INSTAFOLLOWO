@@ -24,6 +24,12 @@ $ python -m pip install -r requirements.txt
 $ python manage.py runserver
 ```
 
+### Running tests
+
+```sh
+$ python manage.py test
+```
+
 ### Todos
 
  - Write MORE Tests
