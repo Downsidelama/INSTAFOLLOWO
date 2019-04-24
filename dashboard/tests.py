@@ -74,7 +74,7 @@ class DashboardTestCase(TestCase):
 
 class BotConnectTest(TestCase):
 
-    def test_set_bot_running_status_running(self):
+    def test_set_status_running_then_get_status_running(self):
         with mock.patch('socket.socket') as mock_socket:
             mock_socket.return_value.recv.return_value = 'RUNNING'.encode()
             bs = BotSocket()
@@ -85,17 +85,21 @@ class BotConnectTest(TestCase):
     def test_set_status_successful_returns_true(self, mock_socket):
         bs = BotSocket()
         self.assertTrue(bs.set_account_status('root', BotStatus.RUNNING))
+        self.assertTrue(bs.set_account_status('root', BotStatus.STOPPED))
 
     @mock.patch.object(socket.socket, 'connect')
-    @mock.patch.object(socket.socket, 'sendall', side_effect=socket.error())
+    @mock.patch.object(socket.socket, 'sendall', side_effect=socket.error("Remote host refused..."))
+    @mock.patch.object(socket.socket, 'recv')
+    def test_get_status_network_error(self, a, b, c):
+        bs = BotSocket()
+        self.assertEqual(bs.get_account_status('root'), BotStatus.UNKNOWN)
+
+    @mock.patch.object(socket.socket, 'connect')
+    @mock.patch.object(socket.socket, 'sendall', side_effect=socket.error("Remote host refused..."))
     @mock.patch.object(socket.socket, 'recv')
     def test_set_status_unsuccessful_returns_false(self, a, b, c):
         """
         Simulate network error by mocking socket.socket
-        :param a:
-        :param b:
-        :param c:
-        :return:
         """
         bs = BotSocket()
         rv = bs.set_account_status('root', BotStatus.RUNNING)
