@@ -14,10 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth import views
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+
+from instafollowo.forms import LoginForm
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='dashboard/', permanent=False), name='index'),
     path('admin/', admin.site.urls),
+    path('login/', views.LoginView.as_view(), {'authentication_form': LoginForm}),
     path('authentication/', include('django.contrib.auth.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
