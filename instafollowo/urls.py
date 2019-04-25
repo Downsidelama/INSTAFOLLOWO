@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views
-from instafollowo.forms import LoginForm
 
 urlpatterns = [
     path('', RedirectView.as_view(url='dashboard/', permanent=False), name='index'),
@@ -26,4 +25,5 @@ urlpatterns = [
     path('authentication/', include('django.contrib.auth.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('accounts.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
