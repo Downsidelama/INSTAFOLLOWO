@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}INSTAUTOFOLLOWO - Instagram accounts{% endblock title %}
+{% block page_header %}Instagram accounts{% endblock page_header %}
+{% block content %}
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Your accounts</h3>
+    </div>
+    <div class="box-body">
+        <table id="accounts" class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Started</th>
+                <th>Run type</th>
+                <th>HashTag</th>
+                <th>Other profile</th>
+                <th>Created at</th>
+                <th>Controls</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if account_count == 0 %}
+                <tr>
+                    <td colspan="6" style="text-align: center">No accounts yet</td>
+                </tr>
+            {% endif %}
+            {% for account in accounts %}
+            <tr>
+                <td>{{ account.username }}</td>
+                <td>{{ account.started }}</td>
+                <td>{{ account.run_type }}</td>
+                <td>{{ account.hashtag }}</td>
+                <td>{{ account.other_profile }}</td>
+                <td>{{ account.created_at }}</td>
+                <td>
+                    <a href="#"><span class="fa fa-play"></span></a>
+                    <a href="#"><span class="fa fa-stop"></span></a>
+                    <a href="#"><span class="fa fa-times"></span></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
