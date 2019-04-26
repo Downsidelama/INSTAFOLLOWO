@@ -2,3 +2,4 @@ Django==2.2
 gunicorn
 django-heroku
 requests
+coverage

@@ -8,7 +8,12 @@ env:
 # install dependencies
 install:
 - pip install -r requirements.txt
+- pip install codecov
 
 # run test scripts
 script:
-- python manage.py test
+- coverage run --source='.' manage.py test
+
+# Push the results back to codecov
+after_success:
+- codecov
