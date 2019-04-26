@@ -1,6 +1,6 @@
 # INSTAUTOFOLLOWO
 
-[![Build Status](https://travis-ci.com/Downsidelama/INSTAFOLLOWO.svg?branch=master)](https://travis-ci.com/Downsidelama/INSTAFOLLOWO) [![CodeFactor](https://www.codefactor.io/repository/github/downsidelama/instafollowo/badge)](https://www.codefactor.io/repository/github/downsidelama/instafollowo) [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Downsidelama/INSTAFOLLOWO)](https://dependabot.com)
+[![Build Status](https://travis-ci.com/Downsidelama/INSTAFOLLOWO.svg?branch=master)](https://travis-ci.com/Downsidelama/INSTAFOLLOWO) [![CodeFactor](https://www.codefactor.io/repository/github/downsidelama/instafollowo/badge)](https://www.codefactor.io/repository/github/downsidelama/instafollowo) [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=Downsidelama/INSTAFOLLOWO)](https://dependabot.com) [![codecov](https://codecov.io/gh/Downsidelama/INSTAFOLLOWO/branch/master/graph/badge.svg)](https://codecov.io/gh/Downsidelama/INSTAFOLLOWO)
 
 INSTAUTOFOLLOWO is a cloud based instagram bot. You can sit back and see the follower numbers grow!
 
