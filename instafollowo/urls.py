@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic.base import RedirectView
 
 from instafollowo.forms import LoginForm
