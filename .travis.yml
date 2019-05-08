@@ -22,7 +22,7 @@ deploy:
   file: 'release.zip'
   skip_cleanup: true
   on:
-    tags: true
+    branch: master
 
 # Push the results back to codecov
 after_success:
