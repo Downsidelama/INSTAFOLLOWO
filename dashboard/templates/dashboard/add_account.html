@@ -1,0 +1,59 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}INSTAUTOFOLLOWO - Instagram accounts{% endblock title %}
+{% block page_header %}Add new Instagram account{% endblock page_header %}
+{% block content %}
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">New account</h3>
+    </div>
+    <div class="box-body">
+        <div class="col-md-4 col-md-offset-4">
+            {% for error in errors %}
+            <div class="callout callout-danger">
+                <h4>Error!</h4>
+
+                <p>{{error}}</p>
+            </div>
+            {% endfor %}
+            <form role="form" action="{% url 'dashboard:add_account' %}" method="post">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input name="username" type="text" class="form-control" id="username"
+                               placeholder="Instagram username" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input name="password" type="password" class="form-control" id="password" placeholder="Password"
+                               autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="run_type">Run type</label>
+                        <select name="run_type" id="run_type" class="form-control">
+                            {% for name, description in run_types.items %}
+                                <option value="{{name}}">{{description}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hashtag">Hashtag</label>
+                        <input name="hashtag" type="text" class="form-control" id="hashtag"
+                               placeholder="Hashtag of content to follow" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="other_profile">Instagram account's name whose followers the bot should
+                            follow</label>
+                        <input name="other_profile" type="text" class="form-control" id="other_profile"
+                               placeholder="Other profile's username" autocomplete="off">
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                {% csrf_token %}
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
