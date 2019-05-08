@@ -22,16 +22,33 @@
             <tbody>
             {% if account_count == 0 %}
                 <tr>
-                    <td colspan="6" style="text-align: center">No accounts yet</td>
+                    <td colspan="7" style="text-align: center">No accounts yet</td>
                 </tr>
             {% endif %}
             {% for account in accounts %}
             <tr>
                 <td>{{ account.username }}</td>
                 <td>{{ account.started }}</td>
-                <td>{{ account.run_type }}</td>
-                <td>{{ account.hashtag }}</td>
-                <td>{{ account.other_profile }}</td>
+                {% if account.run_type in run_types.keys %}
+                    {% for name, description in run_types.items %}
+                        {% if name == account.run_type %}
+                            <td>{{ description }}</td>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+
+                {% if account.hashtag != "" %}
+                    <td>{{ account.hashtag }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
+                {% if account.other_profile != "" %}
+                    <td>{{ account.other_profile }}</td>
+                {% else %}
+                    <td>-</td>
+                {% endif %}
                 <td>{{ account.created_at }}</td>
                 <td>
                     <a href="#"><span class="fa fa-play"></span></a>
@@ -42,6 +59,7 @@
             {% endfor %}
             </tbody>
         </table>
+        <a href="{% url 'dashboard:add_account' %}" type="button" class="btn btn-block btn-primary" style="margin-top: 20px">Add new account</a>
     </div>
 </div>
 {% endblock content %}
