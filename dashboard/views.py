@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 
 from .models import InstagramAccount
 from .forms import AddInstagramAccountForm
@@ -68,6 +69,14 @@ class AddAccount(LoginRequiredMixin, View):
             context = {"errors": ["Please fill in the fields."], "run_types": RunType.get_types_and_descriptions()}
             return render(request, 'dashboard/add_account.html', context=context)
             # return redirect(reverse('dashboard:add_account'))
+
+
+class DeleteAccount(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, id, *args, **kwargs):
+        instagram_account = InstagramAccount.objects.get(id=id)
+        if request.user == instagram_account.user_id:
+            instagram_account.delete()
+        return redirect(reverse('dashboard:accounts'))
 
 
 class BotStatus(LoginRequiredMixin, View):
