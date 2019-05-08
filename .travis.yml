@@ -13,6 +13,16 @@ install:
 # run test scripts
 script:
 - coverage run --source='.' manage.py test
+- zip -r release.zip .
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "rtBxsVaXdZaXZd1Tw6yDmi3QyunViOganzY9eIJJzXGkIOaPgxgWE8I0cecTnOULVzPXcS+TTyHzxA4bX37rmvkJi6502r1Ql2TjF4MqQKl1cTu+0/N8oDRO7rmbjPoVoQSJWbroJOjfJMwj87kmb2u6syyhgz1LB7Ev1oxt/5mrs2DeTzvOw/SOqwDBh9oWUZ/p3k09kBcovawGTNYcY8DFFlbWG9kiZVutDm7dpvnT4vPXCB2IlCPsHqr21NAQG6MntN5TBXy7LDpStdd61QILbgG+MeMH3SS6rS9Fq9R+4QYCmrUMN2ovFj/F6/lFSsl/AueRO4EWXVLaL8O+5ltcb3aQqb4A5ho7/LxXZ224fNvBXqHJ9YM0LzFtKcbgQaau9fLcD7cHJ54nxd+3kmgJajBv6aB8XBB98iFM+1g1MO5AzJd5vXPodUo/FFsY5qs40cVxVOkBjrJeykMTaGWNcibMAbkKdsosdef6qJd36h38cq+Rz9/2P78VQlAuAtqDmIewQUZHuaZsG7R3QJgXe3C5o/6+u3R4zMz54nDaDsYT04CswCmFMvGZHXhViV1GUNRrWqrpo6p9nwharsy7YYHcHwCeikAJbLh3IU+uchBI0LxQ7Y1nd/ExmJnAjB8ueePbpohYeqQY9sw8JJ+J/fBnsV5xuU+d5/L6fYE="
+  file: 'release.zip'
+  skip_cleanup: true
+  on:
+    tags: true
 
 # Push the results back to codecov
 after_success:
