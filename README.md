@@ -10,7 +10,10 @@ INSTAUTOFOLLOWO is a cloud based instagram bot. You can sit back and see the fol
 
 # New Features!
 
- - None so far :C
+ - Add/Remove instagram users
+ - Start/Stop follow bot
+ - Follow other account's followers
+ - Follow by hashtag
 
 ### Installation
 

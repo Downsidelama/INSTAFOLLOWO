@@ -5,11 +5,12 @@ from django.urls import reverse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.request import HttpRequest
-from django.http.response import HttpResponse
 
 from .models import InstagramAccount
 from .forms import AddInstagramAccountForm
 from .entity.run_type import RunType
+
+from bot import bot_runner
 
 
 @login_required
@@ -23,6 +24,13 @@ def index(request):
 
 @login_required
 def accounts(request):
+    all_accounts = list(InstagramAccount.objects.filter(user_id=request.user.id))
+    for account in all_accounts:
+        if bot_runner.is_running(account.username):
+            account.started = True
+        else:
+            account.started = False
+        account.save()
     context = {
         'accounts': list(InstagramAccount.objects.filter(user_id=request.user.id)),
         'account_count': InstagramAccount.objects.filter(user_id=request.user.id).count(),
@@ -49,6 +57,7 @@ class AddAccount(LoginRequiredMixin, View):
             errors = []
             instagram_account = InstagramAccount()
             instagram_account.username = add_account_form.cleaned_data.get('username')
+            instagram_account.password = add_account_form.cleaned_data.get('password')
             instagram_account.user_id = request.user
             instagram_account.started = False
             instagram_account.hashtag = add_account_form.cleaned_data.get("hashtag")
@@ -76,6 +85,22 @@ class DeleteAccount(LoginRequiredMixin, View):
         instagram_account = InstagramAccount.objects.get(id=id)
         if request.user == instagram_account.user_id:
             instagram_account.delete()
+        return redirect(reverse('dashboard:accounts'))
+
+
+class RunAccount(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, id, *args, **kwargs):
+        instagram_account = InstagramAccount.objects.get(id=id)
+        if request.user == instagram_account.user_id:
+            bot_runner.add_bot(instagram_account=instagram_account)
+        return redirect(reverse('dashboard:accounts'))
+
+
+class StopAccount(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, id, *args, **kwargs):
+        instagram_account = InstagramAccount.objects.get(id=id)
+        if request.user == instagram_account.user_id:
+            bot_runner.stop(instagram_account.username)
         return redirect(reverse('dashboard:accounts'))
 
 
