@@ -51,8 +51,8 @@
                 {% endif %}
                 <td>{{ account.created_at }}</td>
                 <td>
-                    <a href="#"><span class="fa fa-play"></span></a>
-                    <a href="#"><span class="fa fa-stop"></span></a>
+                    <a href="{% url 'dashboard:run_account' id=account.id %}"><span class="fa fa-play"></span></a>
+                    <a href="{% url 'dashboard:stop_account' id=account.id %}"><span class="fa fa-stop"></span></a>
                     <a href="{% url 'dashboard:delete_account' id=account.id %}"><span class="fa fa-times"></span></a>
                 </td>
             </tr>

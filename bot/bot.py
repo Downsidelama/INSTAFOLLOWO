@@ -7,7 +7,7 @@ import json
 
 # teszt fiok:
 # gmail.hu instafollowo pe1234
-# instagram instfow1 pe1234
+    # instagram instfow1 pe1234
 
 class Bot:
     # Urls
@@ -147,6 +147,9 @@ class Bot:
             if unfollow.status_code == 200:
                 # self.followercount -= 1
                 print("Unfollowed " + userid)
+            else:
+                print("Status code: " + unfollow.status_code)
+                print("Failed to unfollow: " + userid)
 
     def like(self, mediaid):
         url_like = self.url_like.format(mediaid)
@@ -277,15 +280,18 @@ class Bot:
         user_ids = self.get_userids_by_tag(tag)
         for user_id in user_ids:
             self.follow(user_id)
+            return
 
     def follow_by_user_followers(self, user_id):
         # TODO: add limits to not get detected as a bot
         follower_ids = self.get_followerids(user_id)
         for follower_id in follower_ids:
             self.follow(follower_id)
+            return
 
     def like_by_tag(self, tag):
         # TODO: add limits to not get detected as a bot
         media_ids = self.get_mediaids_by_tag(tag)
         for media_id in media_ids:
             self.like(media_id)
+            return
